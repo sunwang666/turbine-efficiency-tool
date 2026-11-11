@@ -17,11 +17,17 @@ jobs:
           distribution: "temurin"
           java-version: "17"
 
-      - name: Setup Android SDK
-        uses: android-actions/setup-android@v3
+      - name: Accept SDK Licenses
+        run: |
+          yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses || true
+          yes | /usr/local/lib/android/sdk/cmdline-tools/latest/bin/sdkmanager --licenses || true
+          yes | /usr/local/lib/android/sdk/cmdline-tools/13.0/bin/sdkmanager --licenses || true
 
       - name: Build APK
-        run: chmod +x gradlew && ./gradlew assembleDebug --no-daemon
+        run: |
+          chmod +x gradlew
+          export ANDROID_HOME=/usr/local/lib/android/sdk
+          ./gradlew assembleDebug --no-daemon
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
